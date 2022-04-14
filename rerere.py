@@ -1,4 +1,18 @@
 # https://bill1224.tistory.com/251?category=785358
+URL_main= "aa"
+i =1
+f'{URL_main}?searchTerm=%ED%8B%B0%EC%85%94%EC%B8%A0&currentPage={i}&
+rowsperPage=30&
+sort=saleCnt&statusCd=&
+lCateId=&
+cateId=&
+partner=&
+color=&
+size=&
+season=&
+minPrice=&
+maxPrice=&
+searchType=total#none'
 
 import requests
 from bs4 import BeautifulSoup

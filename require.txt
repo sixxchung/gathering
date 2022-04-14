@@ -4,4 +4,5 @@ conda update -n base conda
 
 pip install requests
 conda install bs4 html5lib
-conda install lxml   
+conda install lxml  pandas 
+conda install fastparquet     
