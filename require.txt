@@ -1,0 +1,7 @@
+pip install --upgrade pip
+conda update --all 
+conda update -n base conda
+
+pip install requests
+conda install bs4 html5lib
+conda install lxml   
