@@ -55,7 +55,7 @@ dresstable = pd.DataFrame({
     'bprice':  bPrice,
     'discount': discount
 })
-dresstable.info()
+#dresstable.info()
 
 
 def remove_symbol_to_int(x):
@@ -76,19 +76,20 @@ dresstable['discount'] = dresstable['discount'].apply(remove_symbol_to_int)
 # dresstable.to_csv('mylife2.csv', index=False)                  # 85
 
 df = dresstable
+df.info()
 
 # ----------------------------------------------------------
 
-df = df.loc[df.bprice > 40000].sort_values('discount', ascending=False)
-
-
-
-df = df.drop_duplicates(subset=None, keep='first',
-                   inplace=False, ignore_index=False)
+df = df.drop_duplicates(subset=None, keep='first', inplace=False, ignore_index=False)
+df = df.loc[df.bprice > 40000]
+df = df.loc[df.aprice < 30000]
+df = df.loc[-df.goods.str.contains('카라')]
+df = df.sort_values('discount', ascending=False)
 
 df.to_csv('df.csv', index=False)
 
-
+goodsNm = df.goods[0]
+https://www.topten10mall.com/kr/front/search/totalSearch.do?searchTerm=
 
 dresstable = pd.DataFrame({
     'goods':    goods,

@@ -1,3 +1,4 @@
+from imp import SEARCH_ERROR
 import requests
 from bs4 import BeautifulSoup
 
@@ -84,10 +85,33 @@ import re
 regex = re.compile('[a-z]+')
 
 import re
-regex = re.compile('[a-z]+')   # 패턴객체 regex만들기
-matchObj = regex.match('python a ajkb pattern')
-if matchObj != None:
-    result = matchObj.group()          # 검사할문장에서 패턴매치된 문자열 리턴
+
+SEARCH_WD = 'and'
+SEARCH_WD = 'create'
+TITLES = 'RegExr was created by gskinner.com, and is proudly created by Media Temple.'
+regPatn = re.compile(SEARCH_WD)   # 패턴객체 regex만들기
+regRlt = regPatn.search(TITLES)
+
+TITLES.index(SEARCH_WD)
+
+print(re.search(regPatn,   TITLES))
+print(re.search(SEARCH_WD, TITLES))
+
+result = re.search('a', 'aba')
+print(re.search('a', 'bbb'))
+result = re.finditer('ba', 'baa')
+for i in result:
+    print(i)
+result.group()
+
+
+for i in regRlt:
+    print(i)
+
+if searchObj != None:
+    result = searchObj.group()          # 검사할문장에서 패턴매치된 문자열 리턴
 else:
     result = "Not Found!!"
 print(result)
+
+SEARCH_WD in TITLES
