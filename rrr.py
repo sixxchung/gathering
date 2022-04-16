@@ -62,3 +62,32 @@ dresstable = pd.DataFrame({'names': dress_names,
 'link': dress_links
 })
 print(dresstable.info())
+
+
+import re
+m = re.search('(?<=abc)ef', 'al;kdjf;laekrjncvj;lkadfj;abcdef')
+m.group(0)
+
+
+
+m = re.search(r'(?<=-)\w+', 'spam-egg')
+
+
+import re
+text = "에러 1122 : 레퍼런스 오류\n 에러 1033: 아규먼트 오류"
+regex = re.compile("에러 1033")
+mo = regex.search(text)
+if mo != None:
+    print(mo.group()) 
+
+import re
+regex = re.compile('[a-z]+')
+
+import re
+regex = re.compile('[a-z]+')   # 패턴객체 regex만들기
+matchObj = regex.match('python a ajkb pattern')
+if matchObj != None:
+    result = matchObj.group()          # 검사할문장에서 패턴매치된 문자열 리턴
+else:
+    result = "Not Found!!"
+print(result)

@@ -1,32 +1,37 @@
 import urllib3
-import pdb
-import codecs
-import sys
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-# 1~54
-urllib3.disable_warnings()
-HEADER = {
-    "user-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
-}
+import pdb
+import codecs
+import sys
 
+# 1~54
+Search_word = '반팔티'
+urllib3.disable_warnings()
+HEADER = {"user-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"}
 URL_main = 'https://www.topten10mall.com/kr/front/search/totalSearch.do'
-urls = [
-    f'{URL_main}?searchTerm=반팔티&currentPage={i}&rowsperPage=30&sort=saleCnt&searchType=total#none' for i in range(37)
-]
+
 
 goods = []
 aPrice = []
 bPrice = []
 discount = []
-
-for url in urls:
+# url = urls[6]
+#for url in urls:
+page = 0
+while True:
+    print(page)
+    page = page + 1
+    url = f'{URL_main}?searchTerm={Search_word}&currentPage={page}&rowsperPage=30&sort=saleCnt&searchType=total#none'
+    
     response = requests.get(url, headers=HEADER, verify=False)
     html = response.text
     soup = BeautifulSoup(html, "lxml")
-
+    xx = soup.find("p", attrs={"class": "d-flex justify-content-center text-medium text-bold margin-b-12"})
+    if xx != None :
+        break
     ProdNames = soup.find_all("p", attrs={"class": "card-goods__text"})
     ProdDetails = soup.find_all(
         "div", attrs={"class": "card-goods__priceInfo"})
@@ -61,27 +66,29 @@ def remove_symbol_to_int(x):
     return x
 
 
-dresstable['goods'] = dresstable['goods'].apply(lambda x: str(x))
-dresstable['bprice'] = dresstable['bprice'].apply(remove_symbol_to_int)
-dresstable['aprice'] = dresstable['aprice'].apply(remove_symbol_to_int)
+dresstable['goods']    = dresstable['goods'].apply(lambda x: str(x))
+dresstable['bprice']   = dresstable['bprice'].apply(remove_symbol_to_int)
+dresstable['aprice']   = dresstable['aprice'].apply(remove_symbol_to_int)
 dresstable['discount'] = dresstable['discount'].apply(remove_symbol_to_int)
-dresstable.info()
+#dresstable.info()
 
-dresstable.to_parquet("myfile.parquet", engine='fastparquet')  # 23
-dresstable.to_csv('mylife2.csv', index=False)                  # 85
+# dresstable.to_parquet("myfile.parquet", engine='fastparquet')  # 23
+# dresstable.to_csv('mylife2.csv', index=False)                  # 85
 
 df = dresstable
 
+# ----------------------------------------------------------
 
-df = dresstable[dresstable.bprice > 30000].sort_values(
-    'discount', ascending=False)
+df = df.loc[df.bprice > 40000].sort_values('discount', ascending=False)
+
+
 
 df = df.drop_duplicates(subset=None, keep='first',
                    inplace=False, ignore_index=False)
 
 df.to_csv('df.csv', index=False)
 
-df
+
 
 dresstable = pd.DataFrame({
     'goods':    goods,
@@ -90,17 +97,6 @@ dresstable = pd.DataFrame({
     'discount': discount
 })
 
-df.loc[[0,1,2]]  
-df.loc[0:2]       #same
-df.loc[0:2, :]    #same
-df.loc[:, 0:2]    # x
 
-df[[0,1,2,]]    # x
-df[0:2]
-df.iloc[[0,1]]  #same
-df.iloc[0:2]    #same
-df.iloc[0:2, :] #same
-
-df.iloc[:, 0:2] # all row, slice column
 
 

@@ -2,8 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-import fst
-fst.LogWd
+
 import sys
 import codecs
 import pdb
@@ -184,14 +183,6 @@ for each_tr in news_all:
     striped_text = re.sub('\s\s+', " ", text)
     print(striped_text)
 
-
-df = pd.DataFrame([
-    ['row1', [ 1, 2, 3, 4, 5]],
-    ['row2', [ 6, 7, 8, 9,10]],
-    ['row3', [11,12,13,14,15]],
-    ['row4', [16,17,18,19,20]]
-])
-
 df = pd.DataFrame([
     [ 1,  2,  3,  4,  5],
     [ 6,  7,  8,  9, 10],
@@ -200,24 +191,83 @@ df = pd.DataFrame([
 ], index = ['ridx1', 'ridx2', 'ridx3', 'ridx4'],
    columns=['colNm1', 'colNm2', 'colNm3', 'colNm4', 'colNm5'])
 
+df.loc[['ridx1']]         # DataFrame   
+
+# df.loc['ridx1']  cf.다른거 
+df['ridx1']              # X 
+df['ridx1', 'ridx2']     # X
+
+df[['ridx1']]            # X
+df[['ridx1', 'ridx2']]   # X
+
+df['colNm1']             # Serise
+df.colNm1                # same above
+df['colNm1', 'colNm2']   # X
+
+df[['colNm1']]            # dataframe
+df[['colNm1', 'colNm2']]  # dataframe
 
 
-df.loc[['ridx1']]         # DataFrame   # df.loc['ridx1']  cf.다른거 Series
+# Series
+df.loc['ridx1']            # pandas.core.series.Series
+df.loc['ridx1', 'ridx2']   # X
+
 
 df.loc[['ridx1', 'ridx2']   ]
 df.loc[['ridx1', 'ridx2'], :]      #same above
-df.loc[: , ['colNm1', 'colNm2']]  
+df.loc[: , [ 'colNm2']]  
 
-df[]
+df.loc[['ridx2', 'ridx3'], ['colNm3', 'colNm4']]
 
-df.loc[0:2]  # same
-df.loc[0:2, :]  # same
-df.loc[:, 0:2]    # x
+df.loc['ridx1']          # pandas.core.series.Series
+df.loc['ridx1', 'ridx2']   # Xm4', 'colNm5'])
 
-df[[0, 1, 2, ]]    # x
-df[0:2]
+df.loc[:, 'colNm1']
+df['colNm1']
+df.colNm1      # same above
+
+df['colNm1', 'colNm2']   # X
+
+
+df.loc['ridx1', 'ridx2']
+
+df[1:3]
 df.iloc[[0, 1]]  # same
 df.iloc[0:2]  # same
 df.iloc[0:2, :]  # same
 
 df.iloc[:, 0:2]  # all row, slice column
+
+
+df.iloc[[0,1]]
+df.iloc[[0,1], :]
+
+df['colNm1']
+
+df.loc[df['colNm1']>=6]
+df.loc[[False, True, True, True]]
+
+df[['ridx1']]
+
+
+df.loc[df['colNm1']>6]
+df.loc[[False, False, True, True]]
+df.iloc[[False, False, True, True]]
+
+FalsexxFlalse
+
+df.loc[(df['colNm1'].isin([6,11,16])) & (df['colNm4']>10)]
+
+df.iloc[ :, 0:2]
+df[0:2]
+df[['ridx1']]
+
+df['ridx1']              # X .loc없이 row라벨은 안됨
+df['ridx1', 'ridx2']     # X
+
+df[['ridx1']]            # X
+df[['ridx1', 'ridx2']]   # X
+
+df[['colNm1']]
+
+df[0:2,]
