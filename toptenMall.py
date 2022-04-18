@@ -9,10 +9,11 @@ import sys
 
 # 1~54
 Search_word = '반팔티'
+URL_main = 'https://www.topten10mall.com/kr/front/search/totalSearch.do'
+page = 0
+
 urllib3.disable_warnings()
 HEADER = {"user-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"}
-URL_main = 'https://www.topten10mall.com/kr/front/search/totalSearch.do'
-
 
 goods = []
 aPrice = []
@@ -20,11 +21,12 @@ bPrice = []
 discount = []
 # url = urls[6]
 #for url in urls:
-page = 0
+
 while True:
     print(page)
     page = page + 1
     url = f'{URL_main}?searchTerm={Search_word}&currentPage={page}&rowsperPage=30&sort=saleCnt&searchType=total#none'
+
     
     response = requests.get(url, headers=HEADER, verify=False)
     html = response.text
@@ -89,7 +91,7 @@ df = df.sort_values('discount', ascending=False)
 df.to_csv('df.csv', index=False)
 
 goodsNm = df.goods[0]
-https://www.topten10mall.com/kr/front/search/totalSearch.do?searchTerm=
+#https://www.topten10mall.com/kr/front/search/totalSearch.do?searchTerm=
 
 dresstable = pd.DataFrame({
     'goods':    goods,
