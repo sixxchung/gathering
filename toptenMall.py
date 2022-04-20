@@ -2,48 +2,82 @@ import urllib3
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-
+import numpy as np
 import pdb
 import codecs
 import sys
 
 # 1~54
 Search_word = '반팔티'
-URL_main = 'https://www.topten10mall.com/kr/front/search/totalSearch.do'
-page = 0
-
+v_url = "https://www.topten10mall.com"
+v_url_main = f'{v_url}/kr/front/search/totalSearch.do'
 urllib3.disable_warnings()
 HEADER = {"user-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"}
+
+def remove_others_to_str(x):
+    x = str(x)
+    x = x.replace('\n', '')
+    x = x.strip()
+    return x
+
+def remove_symbol_to_int(x):
+    x = str(x)
+    x = x.replace(',', '')
+    x = x.replace('%', '')
+    x = x.replace('원', '')
+    x = int(x)
+    return x
 
 goods = []
 aPrice = []
 bPrice = []
 discount = []
-# url = urls[6]
-#for url in urls:
+produrl = []
+prodSize = []
 
+page = 0
 while True:
-    print(page)
     page = page + 1
-    url = f'{URL_main}?searchTerm={Search_word}&currentPage={page}&rowsperPage=30&sort=saleCnt&searchType=total#none'
+    print(page)
 
-    
-    response = requests.get(url, headers=HEADER, verify=False)
+    v_url_search = f'{v_url_main}?searchTerm={Search_word}&currentPage={page}&rowsperPage=30&sort=saleCnt&searchType=total#none'
+    response = requests.get(v_url_search, headers=HEADER, verify=False)
     html = response.text
     soup = BeautifulSoup(html, "lxml")
-    xx = soup.find("p", attrs={"class": "d-flex justify-content-center text-medium text-bold margin-b-12"})
-    if xx != None :
-        break
-    ProdNames = soup.find_all("p", attrs={"class": "card-goods__text"})
-    ProdDetails = soup.find_all(
-        "div", attrs={"class": "card-goods__priceInfo"})
 
-    for i in range(30):  # i =5
-        ProdName = ProdNames[i]
-        ProdDetail = ProdDetails[i]
-        afterPrice = ProdDetail.select_one("strong.card-goods__price")
-        beforePrice = ProdDetail.find("s")
-        percent = ProdDetail.select_one("strong.card-goods__discount")
+    v_lastfound = soup.find("p", attrs={"class": "d-flex justify-content-center text-medium text-bold margin-b-12"})
+    if v_lastfound != None :
+        break
+
+    prodBox = soup.find('div', attrs={"id":"divList"})
+    prodList = prodBox.find_all("div", attrs={"class": "card card-goods"})  # 30
+    for product in prodList:
+        # product = prodLists[0]
+
+        ProdNames   = product.find("p",      attrs={"class": "card-goods__text"})
+        afterPrice  = product.find("strong", attrs={"class": "card-goods__price"})
+        beforePrice = product.find("s",      attrs={"class": "card-goods__price"})
+        percent     = product.find("strong", attrs={"class": "card-goods__discount"})
+        
+        v_url_prodDetail = product.find("a", attrs={"class": "card-goods__link"})['href']
+        v_url_prodDetail = f'{v_url}{v_url_prodDetail}'
+
+        response = requests.get(v_url_prodDetail, headers=HEADER, verify=False)
+        html = response.text
+        soup = BeautifulSoup(html, "lxml") 
+
+        sizeBox = soup.find(id="txt_opt_nm") # , elect('')
+        sizeBox = sizeBox.find_next_sibling("div")
+        sizeList = sizeBox.find_all("li")
+        
+        availSize = []
+        if sizeList != None:
+            for eachSize in sizeList:
+                # eachSize = sizeList[0]
+                if len(eachSize.select('div> img')) == 0:
+                    availSize.append(remove_others_to_str(
+                        eachSize.find('button').get_text()))
+                         
 
         goods.append(ProdName.get_text() if ProdName != None else 'NoTitle')
         aPrice.append(afterPrice.get_text() if afterPrice != None else 0)

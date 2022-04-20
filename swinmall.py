@@ -2,13 +2,13 @@ import urllib3
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-
+import numpy as np
 import pdb
 import codecs
 import sys
 
 # 1~54
-Search_word = '제이커스'
+Search_word = '펑키타'#'제이커스'
 URL_main = 'https://www.sdmall.com/'
 page = 0
 
@@ -118,22 +118,19 @@ myTable['discount'] = myTable['discount'].apply(remove_symbol_to_int)
 #myTable['availsize'] = myTable['availsize']
 
 # myTable.info()
-myTable.to_parquet("myfile.parquet", engine='fastparquet')  # 23
+#myTable.to_parquet("myfile.parquet", engine='fastparquet')  # 23
 myTable.to_csv('mylife2.csv', index=False)                  # 85
 
 df = myTable
 df.info()
 
 
-
-
-
-
-
 ################################################################################
 # Filtering
 ################################################################################
 df = df.loc[-df.goods.str.contains('여자')]
+df = df.loc[-df.goods.str.contains('여아')]
+df = df.loc[-df.goods.str.contains('남아')]
 # df = df.drop_duplicates(subset=None, keep='first',
 #                         inplace=False, ignore_index=False)
 # df = df.loc[df.bprice > 40000]
@@ -158,10 +155,24 @@ dff.availsize.unique()
 # dff[dff.availsize == '95(XL)']
 # dff[dff.availsize.isin(['80(S)','85(M)','90(L)'])]
 # dff = dff[(dff.availsize != '80(S)') & (dff.availsize != '85(M)')]
-dff = dff[~dff.availsize.isin(['80(S)','85(M)','90(L)','95(XL)','여성'])]
+
+### 제이커스 
 dff = dff[~dff.availsize.isnull()]
+dff = dff[~dff.availsize.isin(['80(S)','85(M)','90(L)','95(XL)','여성'])]
+
 #dff[dff.availsize == '100'].availsize = '100(XL)'
 dff = dff.replace({'availsize': '100'}, {'availsize':'100(XL)'})
+
+
+### 펑키타
+dff = dff[~dff.availsize.isnull()]
+dff = dff[~dff.availsize.isin(['B8(허리28~29인치)','26(허리26인치)', '28(허리28인치)','S(95)','S(90)'])]
+
+
+
+
+
+
 
 # dcast
 # pd.crosstab(index=[dff['goods'], dff['aprice'], dff['bprice'],dff['discount'],dff],
@@ -181,37 +192,67 @@ dfff = pd.crosstab(index=[dff.goods, dff.aprice, dff.bprice, dff.discount, dff.u
 # Filtering
 ################################################################################
 dd = dfff[(dfff['95(L)']==1) | (dfff['100(XL)']==1)]
+
+dd = dfff
 dd01 = dd.reset_index()
 dd02 = dd01.iloc[:,0:5]
 
-dd02.to_csv('./data/swimmall.csv', index=False) 
+dd02.sort_values('bprice')
+
+
+
+
+jcus.to_csv('./data/swimmall.csv', index=False) 
+dd02 = pd.read_csv('./data/swimmall.csv')
 
 # ------------------------------------------------------------------------------
 import matplotlib.pyplot as plt
-fig = plt.Figure()
 from plotnine import *  # ggplot
-(
-    ggplot(aes(x='bprice'), data=dd01) + geom_bar(stat="count")
-)
-(
-    ggplot(aes(x='bprice',y='aprice'), data=dd01)
-    + geom_point()
-)
-
-# ------------------------------------------------------------------------------
-import plotly.graph_objs as go
+import seaborn as sns
+#import plotly.graph_objs as go
+import plotly.graph_objects as go
 import plotly.express as px
 
+#fig = plt.Figure()
+fig = px.scatter(
+        x=dd02['aprice'],
+        y=dd02['bprice']
+     )
+fig.show()
+# ------------------------------------------------------------------------------
+dd02[dd02.bprice>80000].sort_values(by=['aprice'])
+
+dd02[(dd02.bprice>=50000) & (dd02.bprice<=80000)].sort_values(by=['bprice'])
+
+dd02[dd02.bprice<50000].sort_values(by=['bprice'])
+
+#jcus.to_csv('./data/jcus.csv', index=False) 
+#dd02 = pd.read_csv('./data/jcus.csv')
+
+# ------------------------------------------------------------------------------
 gdf = dd02.groupby('discount').count().reset_index()
 dd02.aprice.unique()
+
 gdf = dd02.groupby('aprice').count().reset_index()
 
 fig = px.bar(gdf, x='aprice', y='goods')
 fig.show()
 
 fig = px.scatter(dd02, x='bprice', y='aprice')
+fig.show()
+
 
 dd02[dd02.bprice>80000]
+
+
+(
+    ggplot(aes(x='bprice'), data=gdf) + geom_bar(stat="count")
+)
+(
+    ggplot(aes(x='bprice',y='aprice'), data=dd01)
+    + geom_point()
+)
+
 
 # df = df.drop_duplicates(subset=None, keep='first',
 #                         inplace=False, ignore_index=False)
