@@ -28,4 +28,24 @@ html = res.text
 soup = BeautifulSoup(html, "html5lib")
 
 
+# pandas와 numpy의 import
+import pandas as pd
+import numpy as np
 
+# 예제용 배열 선언
+ex_df = pd.DataFrame([[0, 1, 3], [0, 2, 4], [0, 3, 3], [
+                            1, 2, 3]], columns=['c0', 'c1', 'c2'])
+
+ex_df
+
+ex_df.duplicated(subset=['c0'])
+
+ex_df.drop_duplicates(subset=)
+
+Index(['c0'])
+
+   c0  c1  c2
+
+0   0   1   3
+
+3   1   2   3
